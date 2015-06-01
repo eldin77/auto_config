@@ -1242,9 +1242,10 @@ def main(args=None, prog=None):
             elif command == '2' or command == 'create':
                 #session_cookie, transport_zone_uuid, portcount
                 nsx_create_range_lswitchs(session_cookie, transport_zone_uuid, 2)            
-
+            """
             elif command == '3' or command == 'poc':
                 kt_poc(session_cookie, transport_zone_uuid)
+            """
  
             elif command == '4' or command == 'backup':
                 backup_config(session_cookie, nsx_conf_member)
