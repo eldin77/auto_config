@@ -36,7 +36,7 @@ def nsx_login(username, password):
     body = urllib.urlencode({"username": username, "password": password })
     headers = {"Content-Type":"application/x-www-form-urlencoded"}
     conn = httplib.HTTPSConnection(nsx_ip, nsx_port)
-    conn.request("POST", "/ws.v1/login", body, headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/login", body, headers)
     response = conn.getresponse()
     if response.status in [httplib.OK]:
         cookies = response.getheader("Set-Cookie")
@@ -68,7 +68,7 @@ def nsx_create_lswitch(session_cookie, displayname, vxlan_id, transport_zone_uui
             }
     
     print json.dumps(body) 
-    conn.request("POST", "/ws.v1/lswitch", json.dumps(body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/lswitch", json.dumps(body), headers)
     response = conn.getresponse()
 
     if response.status != 201:
@@ -112,7 +112,7 @@ def nsx_delete_all_lswitchs(session_cookie):
     for x in range(lswitch_count):
         lswitch_uuid_list.append(lswitch_response['results'][x]['uuid'])
     
-    tmp_url = '/ws.v1/lswitch/'
+    tmp_url = '/'+NSX_API_VERSION+'/lswitch/'
     response = nsx_delete_send_message(session_cookie, tmp_url, lswitch_uuid_list, len(lswitch_uuid_list))
     return response
 
@@ -125,14 +125,14 @@ def nsx_delete_all_lrouters(session_cookie):
     for x in range(lrouter_count):
         lrouter_uuid_list.append(lrouter_response['results'][x]['uuid'])
     
-    tmp_url = '/ws.v1/lrouter/'
+    tmp_url = '/'+NSX_API_VERSION+'/lrouter/'
     response = nsx_delete_send_message(session_cookie, tmp_url, lrouter_uuid_list, len(lrouter_uuid_list))
     return response
 
 def nsx_transport_node_delete_send_message(session_cookie, transport_node_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/transport-node/'+str(transport_node_uuid)
+    url = '/'+NSX_API_VERSION+'/transport-node/'+str(transport_node_uuid)
     conn.request("DELETE", url, None ,headers)
 
     print url
@@ -152,7 +152,7 @@ def nsx_transport_node_delete_send_message(session_cookie, transport_node_uuid):
 def nsx_gateway_service_delete_send_message(session_cookie, gateway_service_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/gateway-service/'+str(gateway_service_uuid)
+    url = '/'+NSX_API_VERSION+'/gateway-service/'+str(gateway_service_uuid)
     conn.request("DELETE", url, None ,headers)
 
     print url
@@ -237,7 +237,7 @@ def nsx_import_create_lswitch(session_cookie, body):
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)  
     
     before_lswitch_uuid = json.loads(body)['uuid']
-    conn.request("POST", "/ws.v1/lswitch", body, headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/lswitch", body, headers)
     response = conn.getresponse()
     print response.status
     if response.status != 201:
@@ -257,7 +257,7 @@ def nsx_import_create_lswitch(session_cookie, body):
 def nsx_show_lswitch_conf(session_cookie):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lswitch?_page_length=5000&fields=*'
+    url = '/'+NSX_API_VERSION+'/lswitch?_page_length=5000&fields=*'
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -283,7 +283,7 @@ def nsx_import_create_lrouter(session_cookie, body):
     tmp_body = json.loads(body)
     del tmp_body['uuid']
 
-    conn.request("POST", "/ws.v1/lrouter", json.dumps(tmp_body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/lrouter", json.dumps(tmp_body), headers)
     response = conn.getresponse()
     print body
     print response.status
@@ -316,7 +316,7 @@ def nsx_import_create_lrouter_port(session_cookie, body):
         print "error: Import lrouter port error" 
         return None
 
-    url = '/ws.v1/lrouter/'+after_lrouter_uuid+'/lport'
+    url = "/"+NSX_API_VERSION+"/lrouter/"+after_lrouter_uuid+"/lport"
 
     conn.request("POST", url, body, headers)
     response = conn.getresponse()
@@ -355,7 +355,7 @@ def nsx_import_create_lrouter_port_attachment(session_cookie, body):
         print "error: Import lrouter port attachmenet error" 
         return None
 
-    url = '/ws.v1/lrouter/'+after_lrouter_uuid+'/lport/'+after_lrouter_port_uuid+'/attachment' 
+    url = "/"+NSX_API_VERSION+"/lrouter/"+after_lrouter_uuid+"/lport/"+after_lrouter_port_uuid+"/attachment" 
     conn.request("PUT", url, t_body, headers)
     response = conn.getresponse()
 
@@ -381,7 +381,7 @@ def nsx_create_lroute(session_cookie, displayname):
             'type': 'LogicalRouterConfig'
             }
     print json.dumps(body) 
-    conn.request("POST", "/ws.v1/lroute", json.dumps(body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/lroute", json.dumps(body), headers)
     response = conn.getresponse()
 
     if response.status != 201:
@@ -398,7 +398,7 @@ def nsx_create_lroute(session_cookie, displayname):
 def nsx_show_lrouter_port_attachement(session_cookie, lrouter_uuid, lport_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lrouter/'+lrouter_uuid+'/lport/'+lport_uuid+'/attachment'
+    url = "/"+NSX_API_VERSION+"/lrouter/"+lrouter_uuid+"/lport/"+lport_uuid+"/attachment"
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -417,7 +417,7 @@ def nsx_show_lrouter_port_attachement(session_cookie, lrouter_uuid, lport_uuid):
 def nsx_show_lrouter_port(session_cookie,lrouter_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lrouter/'+lrouter_uuid+'/lport?_page_length=5000&fields=*' 
+    url = "/"+NSX_API_VERSION+"/lrouter/"+lrouter_uuid+"/lport?_page_length=5000&fields=*" 
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -436,7 +436,7 @@ def nsx_show_lrouter_port(session_cookie,lrouter_uuid):
 def nsx_show_lrouter_conf(session_cookie):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lrouter?_page_length=5000&fields=*'
+    url = "/"+NSX_API_VERSION+"/lrouter?_page_length=5000&fields=*"
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -458,7 +458,7 @@ def nsx_create_transport_zone(session_cookie, displayname):
 
     body = {'display_name': displayname}
     print json.dumps(body) 
-    conn.request("POST", "/ws.v1/transport-zone", json.dumps(body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/transport-zone", json.dumps(body), headers)
     response = conn.getresponse()
 
     if response.status != 201:
@@ -477,7 +477,7 @@ def nsx_show_transport_zone_conf(session_cookie):
     headers = {'Cookie': session_cookie}
     transport_zone_uuid = '395ec839-8529-4fa0-b126-ce74336274a3' 
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/transport-zone/'+transport_zone_uuid 
+    url = "/"+NSX_API_VERSION+"/transport-zone/"+transport_zone_uuid 
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -501,22 +501,22 @@ def nsx_create_transport_node(session_cookie, displayname, transport_zone_uuid, 
 	    'display_name': displayname,
 	    'transport_connectors': [{'type': 'VXLANConnector',
 				      'ip_address': ip_address[0],
-				      '_schema': '/ws.v1/schema/VXLANConnector',
+				      '_schema': '/'+NSX_API_VERSION+'/schema/VXLANConnector',
 				      'transport_zone_uuid': transport_zone_uuid},
                                      {'type': 'VXLANConnector',
 				      'ip_address': ip_address[1],
-				      '_schema': '/ws.v1/schema/VXLANConnector',
+				      '_schema': '/'+NSX_API_VERSION+'/schema/VXLANConnector',
 				      'transport_zone_uuid': transport_zone_uuid},
                                      {'type': 'VXLANConnector',
 				      'ip_address': ip_address[2],
-				      '_schema': '/ws.v1/schema/VXLANConnector',
+				      '_schema': '/'+NSX_API_VERSION+'/schema/VXLANConnector',
 				      'transport_zone_uuid': transport_zone_uuid}],
 	    'integration_bridge_id': '',
 	    'vtep_enabled' : True,
 	    'zone_forwarding' : False,
 	    'tags':[]}
     print json.dumps(body) 
-    conn.request("POST", "/ws.v1/transport-node", json.dumps(body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/transport-node", json.dumps(body), headers)
     response = conn.getresponse()
 
     if response.status != 201:
@@ -534,7 +534,7 @@ def nsx_import_create_transport_node(session_cookie, body):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)  
     before_transport_node_uuid =  json.loads(body)['uuid'] 
-    conn.request("POST", "/ws.v1/transport-node", body, headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/transport-node", body, headers)
     response = conn.getresponse()
 
     if response.status != 201:
@@ -553,7 +553,7 @@ def nsx_import_create_transport_node(session_cookie, body):
 def nsx_show_transport_nodes(session_cookie):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/transport-node?_page_length=5000&fields=*'
+    url = "/"+NSX_API_VERSION+"/transport-node?_page_length=5000&fields=*"
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -573,7 +573,7 @@ def nsx_show_transport_nodes(session_cookie):
 def nsx_show_gateway_service(session_cookie):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/gateway-service?_page_length=5000&fields=*'
+    url = "/"+NSX_API_VERSION+"/gateway-service?_page_length=5000&fields=*"
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -642,7 +642,7 @@ def nsx_create_gateway_service(session_cookie, displayname, transport_zone_uuid,
             'type': 'VtepL2GatewayServiceConfig'
             }
     """  
-    conn.request("POST", "/ws.v1/gateway-service", json.dumps(body), headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/gateway-service", json.dumps(body), headers)
     response = conn.getresponse()
     print response.status
 
@@ -674,7 +674,7 @@ def nsx_import_create_gateway_service(session_cookie, body):
             return None 
 
     body = json.dumps(tmp_body)
-    conn.request("POST", "/ws.v1/gateway-service", body, headers)
+    conn.request("POST", "/"+NSX_API_VERSION+"/gateway-service", body, headers)
     response = conn.getresponse()
     print response.status
 
@@ -693,7 +693,7 @@ def nsx_import_create_gateway_service(session_cookie, body):
 def nsx_show_lswitch_port(session_cookie,lswitch_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lswitch/'+lswitch_uuid+'/lport?_page_length=5000&fields=*' 
+    url = "/"+NSX_API_VERSION+"/lswitch/"+lswitch_uuid+"/lport?_page_length=5000&fields=*" 
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -712,7 +712,7 @@ def nsx_show_lswitch_port(session_cookie,lswitch_uuid):
 def nsx_show_lswitch_port_attachement(session_cookie, lswitch_uuid, lport_uuid):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lswitch/'+lswitch_uuid+'/lport/'+lport_uuid+'/attachment'
+    url = "/"+NSX_API_VERSION+"/lswitch/"+lswitch_uuid+"/lport/"+lport_uuid+"/attachment"
     print url
     conn.request("GET", url,None ,headers)
     response = conn.getresponse()
@@ -737,7 +737,7 @@ def nsx_create_lswitch_port(session_cookie, displayname, lswitch_uuid, gateway_s
             'type': 'LogicalSwitchPortConfig'
             }
     print body
-    url = '/ws.v1/lswitch/'+lswitch_uuid+'/lport'
+    url = "/"+NSX_API_VERSION+"/lswitch/"+lswitch_uuid+"/lport"
     conn.request("POST", url, json.dumps(body), headers)
     response = conn.getresponse()
 
@@ -767,7 +767,7 @@ def nsx_import_create_lswitch_port(session_cookie, body):
         print "error: Import lswitch port error" 
         return None
 
-    url = '/ws.v1/lswitch/'+after_lswitch_uuid+'/lport'
+    url = "/"+NSX_API_VERSION+"/lswitch/"+after_lswitch_uuid+"/lport"
 
     conn.request("POST", url, body, headers)
     print body
@@ -805,7 +805,7 @@ def nsx_import_create_lswitch_port_attachment(session_cookie, body):
     except:
         print "error: Import lswitch port attachmenet error" 
         return None
-    url = '/ws.v1/lswitch/'+after_lswitch_uuid+'/lport/'+after_lswitch_port_uuid+'/attachment' 
+    url = "/"+NSX_API_VERSION+"/lswitch/"+after_lswitch_uuid+"/lport/"+after_lswitch_port_uuid+"/attachment" 
     conn.request("PUT", url, t_body, headers)
     response = conn.getresponse()
 
@@ -842,7 +842,7 @@ def nsx_create_lswitch_port_attachment_body2(set_interface_id, gateway_service_u
 def nsx_lswitch_port_attachment2(session_cookie, lswitch_uuid, lswitch_port_uuid, gateway_service_uuid, set_interface_id, vlan_id):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lswitch/'+lswitch_uuid+'/lport/'+lswitch_port_uuid+'/attachment' 
+    url = "/"+NSX_API_VERSION+"/lswitch/"+lswitch_uuid+"/lport/"+lswitch_port_uuid+"/attachment" 
     body = nsx_create_lswitch_port_attachment_body2(set_interface_id, gateway_service_uuid, vlan_id)
     conn.request("PUT", url, json.dumps(body) ,headers)
     response = conn.getresponse()
@@ -863,7 +863,7 @@ def nsx_lswitch_port_attachment2(session_cookie, lswitch_uuid, lswitch_port_uuid
 def nsx_lswitch_port_attachment(session_cookie, lswitch_uuid, lswitch_port_uuid, gateway_service_uuid, set_interface_id, vlan_id):
     headers = {'Cookie': session_cookie}
     conn =  httplib.HTTPSConnection(nsx_ip, nsx_port)
-    url = '/ws.v1/lswitch/'+lswitch_uuid+'/lport/'+lswitch_port_uuid+'/attachment' 
+    url = "/"+NSX_API_VERSION+"/lswitch/"+lswitch_uuid+"/lport/"+lswitch_port_uuid+"/attachment" 
     body = nsx_create_lswitch_port_attachment_body(set_interface_id, gateway_service_uuid, vlan_id)
     conn.request("PUT", url, json.dumps(body) ,headers)
     response = conn.getresponse()
@@ -1234,7 +1234,6 @@ def main(args=None, prog=None):
 
     while command != None:
         try: 
-            #command = raw_input("1. Delete Lswitch\n2. Create Lswitch\n3. POC\n4. Backup Config\n5. Restore\n6. Clear\n7. Reload Config.\nH. Help\nQ. Quit\nCommand : ")
             command = raw_input("4. Backup Config\n5. Restore\n6. Clear\n7. Reload Config.\nH. Help\nQ. Quit\nCommand : ")
             if command == '1' or command == 'delete':
                 nsx_delete_all_lswitchs(session_cookie)
@@ -1242,11 +1241,7 @@ def main(args=None, prog=None):
             elif command == '2' or command == 'create':
                 #session_cookie, transport_zone_uuid, portcount
                 nsx_create_range_lswitchs(session_cookie, transport_zone_uuid, 2)            
-            """
-            elif command == '3' or command == 'poc':
-                kt_poc(session_cookie, transport_zone_uuid)
-            """
- 
+            
             elif command == '4' or command == 'backup':
                 backup_config(session_cookie, nsx_conf_member)
                 backup_config_copy()
