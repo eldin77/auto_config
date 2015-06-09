@@ -5,16 +5,19 @@ NSX auto backup &amp; restore
 
 ### Dependency
 """
+
 NSX REST API version 1
 
 python 2.7.3
 
 pip install colorama
+
 """
 
 
 ### help
 """
+
 1. Delete Lswitch: NSX Delete Logical Switch Delete                     command: 1, Delete
 2. Create Lswitch: NSX Create Logical Switch, Port, Port ,attachment    command: 2, Create
 4. Backup Config : NSX config backup.                                   command: 4, backup
@@ -23,4 +26,5 @@ pip install colorama
 H. Help.                                                                command: H, help, h
 Q. Quit.                                                                command: q, Q, quit
 """
+
 
