@@ -1,7 +1,7 @@
 import os
 
-nsx_ip = "192.168.1.212"
 nsx_port = 443
+nax_ip = str() 
 username = "admin"
 password = "admin"
 

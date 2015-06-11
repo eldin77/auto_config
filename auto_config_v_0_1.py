@@ -9,10 +9,9 @@ import shutil
 from array import *
 from errno import *
 from logo import *
-from global_value import *
+from global_value import * 
 from make_body import *
 from time import localtime, strftime
-
 nsx_port_attach_type = {'VifAttachment':return_body,
 			'PatchAttachment':return_patch_attachment_body,
                         'L3GatewayAttachment':return_l3_gateway_body,
@@ -31,7 +30,7 @@ class NSXApiHelper:
         self.db = SqlSoup(engine)
  
 
-def nsx_login(username, password):
+def nsx_login(username, password, nsx_ip):
     session_cookie = None
     body = urllib.urlencode({"username": username, "password": password })
     headers = {"Content-Type":"application/x-www-form-urlencoded"}
@@ -1194,8 +1193,25 @@ def all_clear_config(session_cookie, nsx_conf_member):
     nsx_delete_all_transport_node(session_cookie)
     return None
 
+def connect_nsx():
+    from utils import port_check, ip_check
+    global nsx_ip
+
+    ip = raw_input("nsx_ip > ")
+    while True:
+        if ip_check(ip) == True:
+            break
+        else : 
+            print "invalid IP"
+            ip = raw_input("nsx_ip > ")
+
+    session_cookie = nsx_login(username, password, ip)
+    nsx_ip = ip
+    return session_cookie
+
 def main(args=None, prog=None):
     command = str()
+    result = int()
     
     nsx_import_member = {}
     nsx_conf_member = {}
@@ -1225,13 +1241,14 @@ def main(args=None, prog=None):
         except:
             print "nsx_member insert error" 
             return
-   
-    session_cookie = nsx_login(username, password)
+    
+    session_cookie = connect_nsx()
+    #session_cookie = nsx_login(username, password)
     #transport zone create
     #transport_zone_uuid = nsx_create_transport_zone(session_cookie, TRANSPORT_ZONE+'1')
-    transport_zone_uuid = '7308c889-ef2d-43db-80f0-f49226d7f86b'
-
-
+    transport_zone_uuid = str(raw_input("transport_zone_uuid > "))
+    #transport_zone_uuid = '7308c889-ef2d-43db-80f0-f49226d7f86b'
+    
     while command != None:
         try: 
             command = raw_input("4. Backup Config\n5. Restore\n6. Clear\n7. Reload Config.\nH. Help\nQ. Quit\nCommand : ")
