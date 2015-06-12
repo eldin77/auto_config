@@ -15,7 +15,7 @@ LSWITCH_PORT = 'NAIM_LSWITCH_PORT_'
 PATH = os.getcwd()+'/nsx_conf/'
 CONF_PATH = os.getcwd() 
 BACKUPCONF_PATH = os.getcwd()+'/configs'
-NSX_API_VERSION = "ws.v2"
+NSX_API_VERSION = "ws.v1"
 
 nsx_conf_names = ['lrouter.conf',
         'lswitch.conf',
