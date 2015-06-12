@@ -5,7 +5,8 @@ NSX auto backup &amp; restore
 
 ### Dependency
 ```
-NSX REST API version 1
+NSX Version : 4.2.1
+NSX REST API Version : ws.v1
 
 python 2.7.3
 
