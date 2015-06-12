@@ -6,6 +6,7 @@ import hashlib
 import os
 import commands
 import shutil
+import traceback
 from array import *
 from errno import *
 from logo import *
@@ -43,7 +44,8 @@ def nsx_login(username, password, nsx_ip):
                                 cookies.split(";"))[0]
     else:
         print "error: login failed, http response status: %s" % response.status
-        print response.read()
+        #print response.read()
+        raise Exception
 
     conn.close()
     return session_cookie
@@ -1204,14 +1206,12 @@ def connect_nsx():
         else : 
             print "invalid IP"
             ip = raw_input("nsx_ip > ")
-
-    session_cookie = nsx_login(username, password, ip)
     nsx_ip = ip
-    return session_cookie
 
 def main(args=None, prog=None):
     command = str()
     result = int()
+    global nsx_ip
     
     nsx_import_member = {}
     nsx_conf_member = {}
@@ -1242,8 +1242,13 @@ def main(args=None, prog=None):
             print "nsx_member insert error" 
             return
     
-    session_cookie = connect_nsx()
-    #session_cookie = nsx_login(username, password)
+    try:
+        connect_nsx()
+        session_cookie = nsx_login(username, password, nsx_ip)
+    except Exception:
+        traceback.print_exe()
+        exit()
+
     #transport zone create
     #transport_zone_uuid = nsx_create_transport_zone(session_cookie, TRANSPORT_ZONE+'1')
     transport_zone_uuid = str(raw_input("transport_zone_uuid > "))
