@@ -33,5 +33,5 @@ setup(name="nsx_api",
                               'configs/demo3/transport_node.conf'
                               ])],
       py_modules=["auto_config_v_0_1","get_certificate",
-                  "logo", "make_body",
+                  "logo", "make_body","utils",
                   "global_value","__init__"])
